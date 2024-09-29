@@ -16,7 +16,7 @@ func main(){
 
     logF("Server Run...", nil)
 
-    err := http.ListenAndServe(":1002", nil)
+    err := http.ListenAndServe(":8003", nil)
 
     if err != nil {
         log.Fatal("Server Error", err)

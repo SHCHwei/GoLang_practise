@@ -53,5 +53,5 @@ func main(){
 
     api := server.Group("/api")
     uc.RegisterContactRoutes(api)
-    log.Fatal(server.Run(":8099"))
+    log.Fatal(server.Run(":8002"))
 }
