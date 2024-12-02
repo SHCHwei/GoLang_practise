@@ -2,7 +2,7 @@ package middleware
 
 import(
     "github.com/gin-gonic/gin"
-    mf "crud/messageFormat"
+    Rf "crud/pkg/responseFormat"
     "crypto/sha256"
     "reflect"
     "encoding/hex"
@@ -20,7 +20,7 @@ func Token() gin.HandlerFunc {
         unixTime := reflect.ValueOf(c.PostForm("Unix"))
 
         if c.PostForm("Token") == "" || unixTime.Len() == 0 {
-            c.JSON(200, mf.MsgFormat.TokenLose())
+            c.JSON(200, Rf.MsgFormat.TokenLose())
 	        c.Abort()
         }else{
 
@@ -30,13 +30,13 @@ func Token() gin.HandlerFunc {
             token, err := hex.DecodeString(c.PostForm("Token"))
 
             if err != nil {
-                c.JSON(200, mf.MsgFormat.TokenFailed())
+                c.JSON(200, Rf.MsgFormat.TokenFailed())
             	c.Abort()
             }
 
             // Step 3 token16ByteArr 和 Token 比對
             if len(token16ByteArr) != len(token) {
-                c.JSON(200, mf.MsgFormat.TokenLose())
+                c.JSON(200, Rf.MsgFormat.TokenLose())
                 c.Abort()
             }else{
                 for k, v := range token16ByteArr{
@@ -48,7 +48,7 @@ func Token() gin.HandlerFunc {
             }
 
             if checked {
-                c.JSON(200, mf.MsgFormat.TokenFailed())
+                c.JSON(200, Rf.MsgFormat.TokenFailed())
             	c.Abort()
             }else{
                 c.Next()

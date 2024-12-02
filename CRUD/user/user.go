@@ -1,14 +1,11 @@
 package user
 
 import(
-    mf "crud/messageFormat"
+    Rf "crud/pkg/responseFormat"
     "github.com/gin-gonic/gin"
     db "crud/database"
     "encoding/json"
-    "strconv"
-    "fmt"
 )
-
 
 
 func Create(c *gin.Context){
@@ -20,26 +17,23 @@ func Create(c *gin.Context){
     result := db.MariaDB.Create(&user)
 
     if result.Error != nil {
-        fmt.Println("show the error message => ", result.Error)
-        c.JSON(200, mf.MsgFormat.DBFailed())
+        c.JSON(200, Rf.MsgFormat.DBFailed(result.Error))
     }else{
-        c.JSON(200, mf.MsgFormat.Success(""))
+        c.JSON(200, Rf.MsgFormat.Success(result.Error))
     }
 }
 
 func Read(c *gin.Context){
 
-    var user User
-
-    user.ID, _ = strconv.Atoi(c.PostForm("PersonId"))
+    user := User{Uuid: c.PostForm("UUID")}
 
     result := db.MariaDB.First(&user)
 
     if result.Error != nil {
-        c.JSON(200, mf.MsgFormat.DBFailed())
+        c.JSON(200, Rf.MsgFormat.DBFailed(result.Error))
     }else{
         jsonResp, _ := json.Marshal(user)
-        c.JSON(200, mf.MsgFormat.Success(string(jsonResp)))
+        c.JSON(200, Rf.MsgFormat.Success(string(jsonResp)))
     }
 }
 
@@ -53,24 +47,21 @@ func Update(c *gin.Context){
     result := db.MariaDB.Save(&user)
 
     if result.Error != nil {
-        fmt.Println(" error => ", result.Error)
-        c.JSON(200, mf.MsgFormat.DBFailed())
+        c.JSON(200, Rf.MsgFormat.DBFailed(result.Error))
     }else{
-        c.JSON(200, mf.MsgFormat.Success(""))
+        c.JSON(200, Rf.MsgFormat.Success(result.Error))
     }
 }
 
 func Delete(c *gin.Context){
 
-    var user User
-
-    user.ID, _ = strconv.Atoi(c.PostForm("PersonId"))
+    user := User{Uuid: c.PostForm("UUID")}
 
     result := db.MariaDB.Delete(&user)
 
     if result.Error != nil {
-        c.JSON(200, mf.MsgFormat.DBFailed())
+        c.JSON(200, Rf.MsgFormat.DBFailed(result.Error))
     }else{
-        c.JSON(200, mf.MsgFormat.Success(""))
+        c.JSON(200, Rf.MsgFormat.Success(result.Error))
     }
 }
