@@ -3,6 +3,7 @@ package configs
 import(
     "encoding/json"
     "io/ioutil"
+    "strings"
     "os"
     "log"
 )
@@ -24,7 +25,16 @@ var DBConfig DatabaseConfig
 
 func init(){
 
-    jsonFile, loadErr := os.OpenFile("./config/config.json", os.O_CREATE, 0777)
+    var cfgPath string
+
+    // 判別 是執行測試還是正常使用，因為當前目錄會不一樣
+    if len(os.Args) > 1 && strings.HasPrefix(os.Args[1], "-test"){
+        cfgPath = "../config/config.json"
+    }else{
+        cfgPath = "./config/config.json"
+    }
+
+    jsonFile, loadErr := os.OpenFile(cfgPath, os.O_CREATE, 0777)
 
     if loadErr != nil {
         log.Printf("Config load Failed : %v", loadErr)

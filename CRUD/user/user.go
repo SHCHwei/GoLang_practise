@@ -5,6 +5,7 @@ import(
     "github.com/gin-gonic/gin"
     db "crud/database"
     "encoding/json"
+    "github.com/google/uuid"
 )
 
 
@@ -13,20 +14,19 @@ func Create(c *gin.Context){
     var user User
 
     c.ShouldBind(&user)
-
+    user.UUID = uuid.New().String()
     result := db.MariaDB.Create(&user)
 
     if result.Error != nil {
         c.JSON(200, Rf.MsgFormat.DBFailed(result.Error))
     }else{
-        c.JSON(200, Rf.MsgFormat.Success(result.Error))
+        c.JSON(200, Rf.MsgFormat.Success(user))
     }
 }
 
 func Read(c *gin.Context){
 
-    user := User{Uuid: c.PostForm("UUID")}
-
+    user := User{UUID: c.PostForm("UUID")}
     result := db.MariaDB.First(&user)
 
     if result.Error != nil {
@@ -55,9 +55,7 @@ func Update(c *gin.Context){
 
 func Delete(c *gin.Context){
 
-    user := User{Uuid: c.PostForm("UUID")}
-
-    result := db.MariaDB.Delete(&user)
+    result := db.MariaDB.Where("UUID = ?", c.PostForm("UUID")).Delete(&User{})
 
     if result.Error != nil {
         c.JSON(200, Rf.MsgFormat.DBFailed(result.Error))

@@ -18,8 +18,9 @@ func Token() gin.HandlerFunc {
 
         // Step1 檢查 Token & Unix time
         unixTime := reflect.ValueOf(c.PostForm("Unix"))
+        inputToken := c.PostForm("Token")
 
-        if c.PostForm("Token") == "" || unixTime.Len() == 0 {
+        if inputToken == "" || unixTime.Len() == 0 {
             c.JSON(200, Rf.MsgFormat.TokenLose())
 	        c.Abort()
         }else{
@@ -27,7 +28,7 @@ func Token() gin.HandlerFunc {
             // Step2 unix & apiToken 做出 16進位[]byte token
             token16ByteArr := sha256.Sum256([]byte(unixTime.String() + apiToken))
 
-            token, err := hex.DecodeString(c.PostForm("Token"))
+            token, err := hex.DecodeString(inputToken)
 
             if err != nil {
                 c.JSON(200, Rf.MsgFormat.TokenFailed())
